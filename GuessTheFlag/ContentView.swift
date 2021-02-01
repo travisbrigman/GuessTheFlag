@@ -8,6 +8,31 @@
 
 import SwiftUI
 
+//custom modifier - this can be implemented anywwhere and can reduce lines of code in the contentView
+struct Title: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.largeTitle)
+            .foregroundColor(.blue)
+    }
+}
+
+struct FlagImage: View {
+    
+    var number: Int
+    var countries: [String]
+    
+    var body: some View {       
+        Image(countries[number])
+            .renderingMode(.original)
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(Color.gray, lineWidth: 1))
+            .shadow(color: .black, radius: 2)
+    }
+    
+}
+
+
 struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy","Nigeria","Poland","Russia","Spain","UK","US"].shuffled()
     
@@ -26,6 +51,7 @@ struct ContentView: View {
             VStack(spacing: 30){
                 VStack{
                     Text("Tap the flag of")
+                        //.modifier(Title())
                         .foregroundColor(.white)
                     Text(countries[correctAnswer])
                         .foregroundColor(.white)
@@ -35,14 +61,11 @@ struct ContentView: View {
                 
                 ForEach(0 ..< 3) {
                     number in
+                    
                     Button(action: {
                         self.flagTapped(number)
                     }) {
-                        Image(self.countries[number])
-                            .renderingMode(.original)
-                            .clipShape(Capsule())
-                            .overlay(Capsule().stroke(Color.gray, lineWidth: 1))
-                            .shadow(color: .black, radius: 2)
+                        FlagImage(number: number, countries: self.countries)
                     }
                 }
                 Text("Current Score: \(userScore)")
@@ -71,8 +94,6 @@ struct ContentView: View {
             scoreMessage = "Your Score is \(userScore)"
         }
         
-
-       
         showingScore = true
     }
     
