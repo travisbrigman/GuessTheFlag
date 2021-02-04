@@ -32,7 +32,6 @@ struct FlagImage: View {
     
 }
 
-
 struct ContentView: View {
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy","Nigeria","Poland","Russia","Spain","UK","US"].shuffled()
     
@@ -43,6 +42,8 @@ struct ContentView: View {
     @State private var scoreMessage = ""
     @State private var userScore = 0
     
+    @State private var animationAmount = 0.0
+    
     var body: some View {
         ZStack{
             LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
@@ -51,7 +52,6 @@ struct ContentView: View {
             VStack(spacing: 30){
                 VStack{
                     Text("Tap the flag of")
-                        //.modifier(Title())
                         .foregroundColor(.white)
                     Text(countries[correctAnswer])
                         .foregroundColor(.white)
@@ -61,11 +61,18 @@ struct ContentView: View {
                 
                 ForEach(0 ..< 3) {
                     number in
-                    
                     Button(action: {
                         self.flagTapped(number)
+                        withAnimation {
+                            if number == self.correctAnswer {
+                                self.animationAmount += 360
+                            }
+                            
+                        }
                     }) {
                         FlagImage(number: number, countries: self.countries)
+                            .rotation3DEffect(.degrees(number == self.correctAnswer ? self.animationAmount : 0), axis: (x: 0, y: 1, z: 0))
+                        
                     }
                 }
                 Text("Current Score: \(userScore)")
